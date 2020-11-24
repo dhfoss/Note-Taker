@@ -21,7 +21,7 @@ const Note = require(__dirname + '/classes/Note.js');
 const db = require(__dirname + '/db/db.json');
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
     console.log('Listening at http://localhost:' + PORT);
