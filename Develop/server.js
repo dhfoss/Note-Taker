@@ -12,6 +12,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const fs = require('fs');
+const util = require('util');
+const writeFileAsync = util.promisify(fs.writeFile);
+
 const { dirname } = require('path');
 
 const Note = require(__dirname + '/classes/Note.js');
@@ -46,11 +49,13 @@ app.get('*', (req, res) => {
 app.post('/api/notes', (req, res) => {
     db.push(new Note(req.body.title, req.body.text));
     const dbString = JSON.stringify(db);
-    fs.writeFile(__dirname + '/db/db.json', dbString, (err, data) => {
-        if (err) throw err;
-        console.log(db);
+    writeFileAsync(__dirname + '/db/db.json', dbString)
+    .then( ()=> {
         res.json(db);
-    });
+    })
+    .catch(err => {
+        console.log(err);
+    }); 
 });
 
 app.delete('/api/notes/:chosen', (req, res) => {
@@ -61,8 +66,11 @@ app.delete('/api/notes/:chosen', (req, res) => {
         }
     });
     const dbString = JSON.stringify(db);
-    fs.writeFile(__dirname + '/db/db.json', dbString, (err, data) => {
-        if (err) throw err;
+    writeFileAsync(__dirname + '/db/db.json', dbString)
+    .then ( () => {
         res.json(db);
+    })
+    .catch(err => {
+        console.log(err);
     });
 });
