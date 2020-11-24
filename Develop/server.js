@@ -45,7 +45,12 @@ app.get('*', (req, res) => {
 
 app.post('/api/notes', (req, res) => {
     db.push(new Note(req.body.title, req.body.text));
-    res.json(db);
+    const dbString = JSON.stringify(db);
+    fs.writeFile(__dirname + '/db/db.json', dbString, (err, data) => {
+        if (err) throw err;
+        console.log(db);
+        res.json(db);
+    });
 });
 
 app.delete('/api/notes/:chosen', (req, res) => {
@@ -53,7 +58,11 @@ app.delete('/api/notes/:chosen', (req, res) => {
     db.forEach(note => {
         if (chosen == note.id) {
             db.splice(db.indexOf(note), 1);
-            res.json(db);
         }
+    });
+    const dbString = JSON.stringify(db);
+    fs.writeFile(__dirname + '/db/db.json', dbString, (err, data) => {
+        if (err) throw err;
+        res.json(db);
     });
 });
